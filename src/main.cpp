@@ -60,7 +60,6 @@ void displayMenu()
 
     cout << "Current netlist: " << endl;
     currentCircuit.print();
-
 }
 
 int main()
