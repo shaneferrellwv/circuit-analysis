@@ -16,16 +16,17 @@ struct Circuit
     vector<vector<double>> branchIncidenceMatrix;
 
     // constructors
-    Circuit(){};
+    Circuit();
     Circuit(string netList);
 
     // public methods
-    void print();
+    void printBatteries();
+    void printResistors();
     void printBranchIncidenceMatrix();
     vector<double> getCurrentVector();
-    vector<vector<double>> Circuit::getMatrixWithNewColumn(const vector<double>& newColumn) const;
-    vector<double> Circuit::getVoltageDrop();
-    vector<double> Circuit::getVotlageNodes();
+    vector<vector<double>> getMatrixWithNewColumn(const vector<double>& newColumn) const;
+    vector<double> getVoltageDrop();
+    vector<double> getVotlageNodes();
 
     // private methods
 private:

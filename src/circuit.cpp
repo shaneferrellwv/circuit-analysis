@@ -6,7 +6,7 @@
 using namespace std;
 
 // default constructor
-// Circuit::Circuit() {}
+Circuit::Circuit(){}
 
 // Circuit constructor
 Circuit::Circuit(string netList)
@@ -25,22 +25,28 @@ Circuit::Circuit(string netList)
     constructBranchIncidenceMatrix();
 }
 
-void Circuit::print()
+void Circuit::printBatteries()
 {
     cout << "Voltage Sources (source | destination | voltage):" << endl;
-    for (tuple<int, int, int> tuple : this->batteries)
+    for (tuple<int, int, int> &tuple : this->batteries)
     {
-        cout << get<0>(tuple) << " "
-             << get<1>(tuple) << " "
+        cout << setw(3)
+             << get<0>(tuple) << setw(3)
+             << get<1>(tuple) << setw(3)
              << get<2>(tuple)
              << endl;
     }
     cout << endl;
+}
+
+void Circuit::printResistors()
+{
     cout << "Resistors (source | destination | resistance):" << endl;
-    for (tuple<int, int, int> tuple : this->resistors)
+    for (tuple<int, int, int> &tuple : this->resistors)
     {
-        cout << get<0>(tuple) << " "
-             << get<1>(tuple) << " "
+        cout << setw(3)
+             << get<0>(tuple) << setw(3)
+             << get<1>(tuple) << setw(3)
              << get<2>(tuple)
              << endl;
     }
@@ -65,7 +71,7 @@ void Circuit::constructBranchIncidenceMatrix(){
 
     // Get number of nodes
     int numNodes = 0;
-    for (const tuple<int,int,int> tuple : this->batteries)
+    for (const tuple<int,int,int> &tuple : this->batteries)
     {
         if (get<0>(tuple) > numNodes)
             numNodes = get<0>(tuple);
@@ -73,7 +79,7 @@ void Circuit::constructBranchIncidenceMatrix(){
             numNodes = get<1>(tuple);
     }
 
-    for (const tuple<int,int,int> tuple : this->resistors)
+    for (const tuple<int,int,int> &tuple : this->resistors)
     {
         if (get<0>(tuple) > numNodes)
             numNodes = get<0>(tuple);
@@ -107,8 +113,8 @@ void Circuit::constructBranchIncidenceMatrix(){
 }
 
 void transpose(vector<vector<int>> matrix){
-    for(int i = 0; i < matrix.size(); i++){
-        for(int j = 0; j < matrix[0].size(); j++){
+    for(long long unsigned int i = 0; i < matrix.size(); i++){
+        for(long long unsigned int j = 0; j < matrix[0].size(); j++){
             int temp = matrix[i][j];
             matrix[i][j] = matrix[j][i];
             matrix[j][i] = temp;
@@ -120,9 +126,9 @@ void multiply(vector<vector<int>> matrix, vector<vector<int>> matrix2){
     vector<vector<int>> result;
     result.resize(matrix.size(), vector<int>(matrix2[0].size(), 0));
 
-    for(int i = 0; i < matrix.size(); i++){
-        for(int j = 0; j < matrix2[0].size(); j++){
-            for(int k = 0; k < matrix[0].size(); k++){
+    for(long long unsigned int i = 0; i < matrix.size(); i++){
+        for(long long unsigned int j = 0; j < matrix2[0].size(); j++){
+            for(long long unsigned int k = 0; k < matrix[0].size(); k++){
                 result[i][j] += matrix[i][k] * matrix2[k][j];
             }
         }
@@ -130,9 +136,9 @@ void multiply(vector<vector<int>> matrix, vector<vector<int>> matrix2){
 }
 
 void ensureZerosAtBottom(vector<vector<double>>* matrix_ptr, int depth) {
-    for(int i = depth; i < matrix_ptr->size(); i++) {
+    for(long long unsigned int i = depth; i < matrix_ptr->size(); i++) {
         if((*matrix_ptr)[i][depth] == 0) {
-            for(int j = i + 1; j < matrix_ptr->size(); j++) {
+            for(long long unsigned int j = i + 1; j < matrix_ptr->size(); j++) {
                 if((*matrix_ptr)[j][depth] != 0) {
                     swap((*matrix_ptr)[i], (*matrix_ptr)[j]);
                     break;
@@ -144,7 +150,7 @@ void ensureZerosAtBottom(vector<vector<double>>* matrix_ptr, int depth) {
 
 vector<double> computeFactors(vector<vector<double>>* matrix_ptr, int depth) {
     vector<double> factors;
-    for(int i = depth + 1; i < matrix_ptr->size(); i++) {
+    for(long long unsigned int i = depth + 1; i < matrix_ptr->size(); i++) {
         if((*matrix_ptr)[depth][depth] != 0) {
             factors.push_back((*matrix_ptr)[i][depth] / (*matrix_ptr)[depth][depth]);
         } else {
@@ -166,16 +172,16 @@ void printMatrix(vector<vector<double>> matrix){
 
 void forwardElimination(vector<vector<double>>* matrix_ptr, vector<double> factors, int depth){
     int currentRowIndex = depth + 1;
-    int factorIndex = 0;
+    long long unsigned int factorIndex = 0;
     while(factorIndex < factors.size()){
         // Multiply the row at 'depth' by the current factor and store in new vector
         vector<double> diffRow;
-        for(int j = depth; j < (*matrix_ptr)[0].size(); j++){
+        for(long long unsigned int j = depth; j < (*matrix_ptr)[0].size(); j++){
             diffRow.push_back((*matrix_ptr)[depth][j] * factors[factorIndex]);
         }
 
         // Subtract the new vector from the current row
-        for(int i = depth; i < (*matrix_ptr)[currentRowIndex].size(); i++){
+        for(long long unsigned int i = depth; i < (*matrix_ptr)[currentRowIndex].size(); i++){
             (*matrix_ptr)[currentRowIndex][i] -= diffRow[i - depth];
         }
 
@@ -198,7 +204,7 @@ vector<double> solveMatrix(vector<vector<double>>* matrix_ptr, int depth = 0){
     }
 
     double cost = 0;
-    for(int i = depth+1; i < (*matrix_ptr)[0].size()-1; i++){
+    for(long long unsigned int i = depth+1; i < (*matrix_ptr)[0].size()-1; i++){
         cost += (*matrix_ptr)[depth][i] * (*matrix_ptr)[i][(*matrix_ptr)[0].size()-1];
         (*matrix_ptr)[depth][i] = 0;
     }
@@ -209,7 +215,7 @@ vector<double> solveMatrix(vector<vector<double>>* matrix_ptr, int depth = 0){
     // printMatrix(*matrix_ptr);
     // Return last column as a vector
     vector<double> result;
-    for(int i = 0; i < matrix_ptr->size(); i++){
+    for(long long unsigned int i = 0; i < matrix_ptr->size(); i++){
         result.push_back((*matrix_ptr)[i][matrix_ptr->size()]);
     }
     return result;
@@ -252,7 +258,7 @@ vector<vector<double>> Circuit::getMatrixWithNewColumn(const vector<double>& new
     vector<vector<double>> newMatrix = branchIncidenceMatrix;
 
     // Add the new column to the new matrix
-    for (int i = 0; i < newMatrix.size(); ++i) {
+    for (long long unsigned int i = 0; i < newMatrix.size(); ++i) {
         newMatrix[i].push_back(newColumn[i]);
     }
 
@@ -273,12 +279,12 @@ vector<double> Circuit::getVoltageDrop(){
     vector<double> currentVector = Circuit::getCurrentVector();
     vector<double> voltageDropVector(currentVector.size(),0);
     int idx = 0;
-    for (const tuple<int,int,int> tuple : this->batteries)
+    for (const tuple<int,int,int> &tuple : this->batteries)
     {
         voltageDropVector[idx] = double(get<2>(tuple));
         idx++;
     }
-    for (const tuple<int,int,int> tuple : this->resistors)
+    for (const tuple<int,int,int> &tuple : this->resistors)
     {
         voltageDropVector[idx] = double(currentVector[idx]*(get<2>(tuple)));
         idx++;

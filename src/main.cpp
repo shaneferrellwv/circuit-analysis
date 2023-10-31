@@ -38,8 +38,12 @@ void readNewNetlist()
     }
 }
 
+
+
 void computeCurrent()
 {
+    vector<double> currents = currentCircuit.getCurrentVector();
+
 
 }
 
@@ -59,7 +63,8 @@ void displayMenu()
     cout << "D. Exit" << endl << endl;
 
     cout << "Current netlist: " << endl;
-    currentCircuit.print();
+    currentCircuit.printBatteries();
+    currentCircuit.printResistors();
     currentCircuit.printBranchIncidenceMatrix();
 }
 
