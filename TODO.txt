@@ -1,0 +1,6 @@
+1. check for valid circuit and have it end / restart program and ask for valid netlist
+2. check for valid netlist name (ie if file exists) and print if issue
+3. check that nodes user asks for are valid (like exist and connect) and print an issue if issue
+4. add submenu for current for junctions (or comma seperated ones or current at a certain node)
+5. add submenu for voltage for junctions (or comma seperated ones or voltage at a certain node)
+6. TEST

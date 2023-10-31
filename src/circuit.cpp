@@ -49,7 +49,7 @@ void Circuit::print()
 
 void Circuit::printBranchIncidenceMatrix(){
     cout << "Branch Incidence Matrix:" << endl;
-    for(vector<int> row : this->branchIncidenceMatrix){
+    for(vector<double> row : this->branchIncidenceMatrix){
         for(int element : row){
             cout << setw(3) << element;
         }
@@ -65,7 +65,7 @@ void Circuit::constructBranchIncidenceMatrix(){
 
     // Get number of nodes
     int numNodes = 0;
-    for (const tuple<int, int, int> tuple : this->batteries)
+    for (const tuple<int,int,int> tuple : this->batteries)
     {
         if (get<0>(tuple) > numNodes)
             numNodes = get<0>(tuple);
@@ -73,7 +73,7 @@ void Circuit::constructBranchIncidenceMatrix(){
             numNodes = get<1>(tuple);
     }
 
-    for (const tuple<int, int, int> tuple : this->resistors)
+    for (const tuple<int,int,int> tuple : this->resistors)
     {
         if (get<0>(tuple) > numNodes)
             numNodes = get<0>(tuple);
@@ -83,14 +83,14 @@ void Circuit::constructBranchIncidenceMatrix(){
     numNodes+=1;
 
     // Initialize branch incidence matrix
-    this->branchIncidenceMatrix.resize(numNodes, vector<int>(numBranches, 0));
+    this->branchIncidenceMatrix.resize(numNodes, vector<double>(numBranches, 0));
 
     // Populate branch incidence matrix
     int branchIndex = 0;
     for (tuple<int, int, int> tuple : this->batteries)
     {
-        branchIncidenceMatrix[get<0>(tuple)][branchIndex] = 1;
-        branchIncidenceMatrix[get<1>(tuple)][branchIndex] = -1;
+        branchIncidenceMatrix[get<0>(tuple)][branchIndex] = 1.0;
+        branchIncidenceMatrix[get<1>(tuple)][branchIndex] = -1.0;
         branchIndex++;
     }
 
@@ -100,7 +100,10 @@ void Circuit::constructBranchIncidenceMatrix(){
         branchIncidenceMatrix[get<1>(tuple)][branchIndex] = -1;
         branchIndex++;
     }
-
+    // Remove the first row from the matrix to get reduced matrix
+    if (!this->branchIncidenceMatrix.empty()) {
+        this->branchIncidenceMatrix.erase(this->branchIncidenceMatrix.begin());
+    }
 }
 
 void transpose(vector<vector<int>> matrix){
@@ -236,4 +239,56 @@ void Circuit::addResistor(istringstream& in)
 
     tuple resistor = make_tuple(source, destination, resistance);
     this->resistors.push_back(resistor);
+}
+
+vector<vector<double>> Circuit::getMatrixWithNewColumn(const vector<double>& newColumn) const {
+    // Check if the new column has the same number of rows as the existing matrix
+    if (newColumn.size() != branchIncidenceMatrix.size()) {
+        // Handle error: Number of rows in the new column must match the existing matrix
+        return branchIncidenceMatrix; // Return the original matrix if there is an error
+    }
+
+    // Create a new matrix by copying the original matrix
+    vector<vector<double>> newMatrix = branchIncidenceMatrix;
+
+    // Add the new column to the new matrix
+    for (int i = 0; i < newMatrix.size(); ++i) {
+        newMatrix[i].push_back(newColumn[i]);
+    }
+
+    // Return the new matrix with the added column
+    return newMatrix;
+}
+
+
+vector<double> Circuit::getCurrentVector(){
+    int nrows = this->branchIncidenceMatrix.size();
+    vector<double> zero_vector(nrows,0.0);
+    vector<vector<double>> incidence_mat_with_0 = Circuit::getMatrixWithNewColumn(zero_vector);
+    vector<double> current_vector = solveMatrix(&incidence_mat_with_0);
+    return current_vector;
+}
+
+vector<double> Circuit::getVoltageDrop(){
+    vector<double> currentVector = Circuit::getCurrentVector();
+    vector<double> voltageDropVector(currentVector.size(),0);
+    int idx = 0;
+    for (const tuple<int,int,int> tuple : this->batteries)
+    {
+        voltageDropVector[idx] = double(get<2>(tuple));
+        idx++;
+    }
+    for (const tuple<int,int,int> tuple : this->resistors)
+    {
+        voltageDropVector[idx] = double(currentVector[idx]*(get<2>(tuple)));
+        idx++;
+    }
+    return voltageDropVector;
+}
+
+vector<double> Circuit::getVotlageNodes(){
+    vector<double> voltageDropVec = Circuit::getVoltageDrop();
+    vector<vector<double>> incidence_mat_with_voltage_drop = Circuit::getMatrixWithNewColumn(voltageDropVec);
+    vector<double> nodesVector = solveMatrix(&incidence_mat_with_voltage_drop);
+    return nodesVector;
 }

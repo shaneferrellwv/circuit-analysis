@@ -13,7 +13,7 @@ struct Circuit
     tupleVector batteries;
     tupleVector resistors;
 
-    vector<vector<int>> branchIncidenceMatrix;
+    vector<vector<double>> branchIncidenceMatrix;
 
     // constructors
     Circuit(){};
@@ -22,6 +22,10 @@ struct Circuit
     // public methods
     void print();
     void printBranchIncidenceMatrix();
+    vector<double> getCurrentVector();
+    vector<vector<double>> Circuit::getMatrixWithNewColumn(const vector<double>& newColumn) const;
+    vector<double> Circuit::getVoltageDrop();
+    vector<double> Circuit::getVotlageNodes();
 
     // private methods
 private:
