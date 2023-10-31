@@ -9,9 +9,15 @@ using namespace std;
 struct Circuit
 {
     // member variables
-    typedef vector<tuple<int, int, int>> tupleVector;
+    typedef vector<tuple<int, int, double>> tupleVector;
     tupleVector batteries;
     tupleVector resistors;
+
+    // Node Voltages
+    vector<double> nodeVoltages;
+
+    // Source currents
+    vector<double> sourceCurrents;
 
     vector<vector<double>> branchIncidenceMatrix;
 
@@ -25,6 +31,7 @@ struct Circuit
     void printBranchIncidenceMatrix();
     vector<double> getCurrentVector();
     vector<vector<double>> getMatrixWithNewColumn(const vector<double>& newColumn) const;
+    vector<vector<double>> getMatrixWithNewColumn(vector<vector<double>> *matrix_ptr, const vector<double> &newColumn) const;
     vector<double> getVoltageDrop();
     vector<double> getVotlageNodes();
 
@@ -32,5 +39,7 @@ struct Circuit
 private:
     void addBattery(istringstream& in);
     void addResistor(istringstream& in);
+    vector<double> solveMatrix(vector<vector<double>> *matrix_ptr, int depth);
     void constructBranchIncidenceMatrix();
+    void makeGoodMatrices();
 };
