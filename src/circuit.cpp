@@ -495,3 +495,53 @@ vector<double> Circuit::getResistorCurrents(){
     
     return resistorCurrentVec;
 }
+
+// Function to calculate the total resistance between a series of node pairs
+double Circuit::getCurrentFromPoints(const std::vector<std::pair<int, int>>& nodePairs) {
+    double totalResistance = 0.0;
+    double totalVoltage = 0.0;
+
+    for (const auto& nodePair : nodePairs) {
+        double pathResistance = 0.0;
+        bool resistorFound = false;
+        double pathVoltage = 0.0;
+
+        // For each node pair, find the corresponding resistors
+        for (const auto& resistor : resistors) {
+            if ((std::get<0>(resistor) == nodePair.first && std::get<1>(resistor) == nodePair.second) ||
+                (std::get<0>(resistor) == nodePair.second && std::get<1>(resistor) == nodePair.first)) { // Considering bidirectional
+                if (!resistorFound) {
+                    pathResistance = std::get<2>(resistor); // First resistor found
+                    resistorFound = true;
+                } else {
+                    // If another resistor is found, they are in parallel
+                    pathResistance = (pathResistance * std::get<2>(resistor)) / (pathResistance + std::get<2>(resistor));
+                }
+            }
+        }
+        pathVoltage = this->nodeVoltages[nodePair.first] - this->nodeVoltages[nodePair.second];
+        if (!resistorFound) {
+            for (const auto& battery : batteries) {
+                if ((std::get<0>(battery) == nodePair.first && std::get<1>(battery) == nodePair.second) ||
+                    (std::get<0>(battery) == nodePair.second && std::get<1>(battery) == nodePair.first)) { // Considering bidirectional
+                    pathResistance = 0.0;
+                    pathVoltage = 0.0;
+                    resistorFound = true;
+                }
+            }
+        }
+
+        if (!resistorFound) {
+            //Check if battery exists here first
+            std::cerr << "No resistor found for node pair (" << nodePair.first << ", " << nodePair.second << ")" << std::endl;
+            return -1; // Error code for "resistor not found"
+        }
+
+        totalResistance += pathResistance; // Resistors in series are added
+        totalVoltage += pathVoltage;
+    }
+
+    
+
+    return totalVoltage/totalResistance;
+}

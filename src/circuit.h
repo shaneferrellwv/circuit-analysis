@@ -21,6 +21,7 @@ struct Circuit
     vector<double> sourceCurrents;
     vector<double> resistorCurrents;
     map<string, double> currents;
+    map<string, double> nodeToNames;
 
     vector<vector<double>> branchIncidenceMatrix;
 
@@ -40,6 +41,7 @@ struct Circuit
     vector<double> getVoltageDrop();
     vector<double> getVotlageNodes();
     vector<double> getResistorCurrents();
+    double getCurrentFromPoints(const std::vector<std::pair<int, int>>& nodePairs);
 
     // private methods
 private:
