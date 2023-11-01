@@ -83,9 +83,10 @@ void readNewNetlist()
     char option;
     cin >> option;
     
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "\nEnter netlist file path: ";
     string netlist;
-    cin >> netlist;
+    getline(cin, netlist);
 
     // check if netlist is valid
     if (!endsWithDotNet(netlist))
