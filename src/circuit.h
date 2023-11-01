@@ -34,6 +34,7 @@ struct Circuit
     vector<vector<double>> getMatrixWithNewColumn(vector<vector<double>> *matrix_ptr, const vector<double> &newColumn) const;
     vector<double> getVoltageDrop();
     vector<double> getVotlageNodes();
+    vector<double> getResistorCurrents();
 
     // private methods
 private:

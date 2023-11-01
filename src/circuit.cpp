@@ -37,6 +37,8 @@ Circuit::Circuit(string netList)
     }
     cout << endl;
 
+    vector<double> resistanceCurVec = getResistorCurrents();
+
     //Init node voltages and source currents
 }
 
@@ -369,7 +371,7 @@ void Circuit::addResistor(istringstream &in)
     in >> destination;
     in >> resistance;
 
-    tuple resistor = make_tuple(source, destination, resistance);
+    tuple<int,int,int> resistor = make_tuple(source, destination, resistance);
     this->resistors.push_back(resistor);
 }
 
@@ -453,4 +455,20 @@ vector<double> Circuit::getVotlageNodes()
     vector<vector<double>> incidence_mat_with_voltage_drop = Circuit::getMatrixWithNewColumn(voltageDropVec);
     vector<double> nodesVector = solveMatrix(&incidence_mat_with_voltage_drop);
     return nodesVector;
+}
+
+vector<double> Circuit::getResistorCurrents(){
+
+    vector<double> resistorCurrentVec(this->resistors.size(),0);
+    int i = 0;
+    for (const tuple<int, int, double> &tuple : this->resistors){
+        int source_idx =(int)get<0>(tuple);
+        int dest_idx =(int)get<1>(tuple);
+        int R = get<2>(tuple);
+        resistorCurrentVec[i] = (this->nodeVoltages[source_idx]-this->nodeVoltages[dest_idx])/R;
+        cout<<"Current through resistor "<<i<<": "<<resistorCurrentVec[i]<<"A"<<endl;
+        i++;
+    }
+    
+    return resistorCurrentVec;
 }
