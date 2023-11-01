@@ -36,7 +36,7 @@ bool hasNan(const std::vector<double>& vec) {
 
 bool isInExpectedFormat(const std::string& str) {
     char bracket1, bracket2, bracket3, bracket4, comma1, comma2, comma3;
-    double num1, num2, num3, num4;
+    int num1, num2, num3, num4;
     
     std::istringstream iss(str);
     if (!(iss >> bracket1 >> num1 >> comma1 >> num2 >> bracket2 >> comma2 >> 
@@ -177,7 +177,8 @@ void computeCurrent()
             // expected format [node1, node2], [node2, node3]
             // this is the dumbest format ever
             string nodesList;
-            cin >> nodesList;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            getline(cin, nodesList);
             if (!isInExpectedFormat(nodesList))
             {
                 cout << "Error: List not in expected format [node1, node2], [node2, node3]" << endl;

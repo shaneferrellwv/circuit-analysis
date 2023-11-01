@@ -1,10 +1,7 @@
-1. check netlist filename validity
-2. check netlist file validity
 3. print specific current
 4. check validity of user-enetered pairs of nodes (existence of nodes and connection between nodes)
 5. print all voltages and voltage potentials
 6. print specific voltage/voltage potential
 7. check validity of user-entered node or pair of nodes (existence of nodes)
-8. test absolute file path
 9. test another case or two
 10. clean up text menu (clear terminal between menus?)
