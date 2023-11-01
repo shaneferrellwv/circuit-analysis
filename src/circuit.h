@@ -50,5 +50,5 @@ private:
     void addResistor(istringstream& in);
     vector<double> solveMatrix(vector<vector<double>> *matrix_ptr, int depth);
     void constructBranchIncidenceMatrix();
-    void makeGoodMatrices();
+    void makeConductanceMatrices();
 };

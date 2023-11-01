@@ -1,7 +1,16 @@
 
 4. check validity of user-enetered pairs of nodes (existence of nodes and connection between nodes)
-5. print all voltages and voltage potentials
+    nick
 6. print specific voltage/voltage potential
-7. check validity of user-entered node or pair of nodes (existence of nodes)
+    nick
+
+
+
+
 9. test another case or two
+    shane maybe
 10. clean up text menu (clear terminal between menus?)
+    shane
+11. test on ece server
+    shane
+

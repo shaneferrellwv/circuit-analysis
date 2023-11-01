@@ -24,7 +24,7 @@ Circuit::Circuit(string netList)
     }
 
     constructBranchIncidenceMatrix();
-    makeGoodMatrices();
+    makeConductanceMatrices();
 
     // printNodeVoltages();
     // printSourceCurrents();
@@ -168,7 +168,7 @@ void printMatrix(vector<vector<double>> matrix)
     cout << endl;
 }
 
-void Circuit::makeGoodMatrices()
+void Circuit::makeConductanceMatrices()
 {
     int numNodes = branchIncidenceMatrix.size() + batteries.size(); // Include supernodes
     vector<vector<double>> G(numNodes, vector<double>(numNodes, 0.0));
@@ -546,3 +546,4 @@ double Circuit::getCurrentFromPoints(const std::vector<std::pair<int, int>>& nod
 
     return totalVoltage/totalResistance;
 }
+

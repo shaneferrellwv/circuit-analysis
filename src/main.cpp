@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem>
+#include <sys/stat.h>
 #include <vector>
 #include <cmath>
 #include <limits>
@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+
 
 #include "circuit.h"
 
@@ -29,7 +30,8 @@ bool endsWithDotNet(const std::string &str)
 
 bool fileExists(const std::string &path)
 {
-    return filesystem::exists(path);
+    struct stat buffer;
+    return (stat(path.c_str(),&buffer)==0);
 }
 
 bool hasNan(const std::vector<double> &vec)
