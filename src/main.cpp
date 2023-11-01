@@ -53,20 +53,6 @@ bool isInExpectedFormat(const std::string& str) {
             comma1 == ',' && comma2 == ',' && comma3 == ',');
 }
 
-bool isInExpectedFormat(const std::string& str) {
-    char bracket1, bracket2, bracket3, bracket4, comma1, comma2, comma3;
-    int num1, num2, num3, num4;
-    
-    std::istringstream iss(str);
-    if (!(iss >> bracket1 >> num1 >> comma1 >> num2 >> bracket2 >> comma2 >> 
-              bracket3 >> num3 >> comma3 >> num4 >> bracket4)) {
-        return false;  // String doesn't match the format
-    }
-
-    return (bracket1 == '[' && bracket2 == ']' && bracket3 == '[' && bracket4 == ']' && 
-            comma1 == ',' && comma2 == ',' && comma3 == ',');
-}
-
 bool checkNetlistValidity(const std::string &filename){
     std::ifstream file(filename);
     if (!file.is_open())
