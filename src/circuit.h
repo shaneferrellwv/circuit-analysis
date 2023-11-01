@@ -19,6 +19,7 @@ struct Circuit
 
     // Source currents
     vector<double> sourceCurrents;
+    vector<double> resistorCurrents;
     map<string, double> currents;
 
     vector<vector<double>> branchIncidenceMatrix;

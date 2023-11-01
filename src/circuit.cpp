@@ -22,6 +22,7 @@ Circuit::Circuit(string netList)
         else if (component[0] == 'R')
             this->addResistor(in);
     }
+
     constructBranchIncidenceMatrix();
     makeGoodMatrices();
 
@@ -32,13 +33,10 @@ Circuit::Circuit(string netList)
     for(int i = 0; i < this->sourceCurrents.size(); i++)
         currents.insert({"V" + to_string(i + 1), sourceCurrents[i]});
 
-    vector<double> resistanceCurVec = getResistorCurrents();
-    for(int i = 0; i < resistanceCurVec.size(); i++) 
-        currents.insert({"R" + to_string(i + 1), resistanceCurVec[i]});
+    for(int i = 0; i < resistorCurrents.size(); i++) 
+        currents.insert({"R" + to_string(i + 1), resistorCurrents[i]});
 
-        
-
-    //Init node voltages and source currents
+    
 }
 
 // utlitiy for print debugging
@@ -58,7 +56,6 @@ void Circuit::printSourceCurrents()
     cout << "\n\nCurrent values through sources: " << endl;
     for(int i = 0; i < this->sourceCurrents.size(); i++) {
         cout << setw(12) << sourceCurrents[i] << endl;
-        currents.insert({"V" + i + 1, sourceCurrents[i]});
     }
     cout << endl;
 }
@@ -246,6 +243,8 @@ void Circuit::makeGoodMatrices()
     {
         this->sourceCurrents.push_back(V[i]);
     }
+
+    resistorCurrents = this->getResistorCurrents();
 }
 
 
