@@ -60,21 +60,30 @@ void computeCurrent()
     cout << "\nSelect one of the following options:" << endl << endl;
 
     cout << "A. Compute currents across all branches in circuit" << endl;
-    cout << "B. Compute currents across specified branches" << endl << endl;
+    cout << "B. Compute current across a particular branch" << endl << endl;
 
     
     char option;
     cin >> option;
+    cout << endl;
 
     switch(option)
     {
         case 'A': 
         {
-            
+            for (auto it = currentCircuit.currents.begin(); it != currentCircuit.currents.end(); ++it)
+            {
+                cout << "I(" << it->first << "): " << it->second << endl;
+            }
             break;
         }
         case 'B': 
         {
+            cout << "Please enter two pairs of nodes: ";
+            // expected format [node1, node2], [node2, node3]
+            // this is the dumbest format ever
+            
+
             
             break;
         }

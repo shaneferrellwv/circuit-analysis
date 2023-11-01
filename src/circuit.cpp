@@ -24,22 +24,43 @@ Circuit::Circuit(string netList)
     }
     constructBranchIncidenceMatrix();
     makeGoodMatrices();
-    cout << "\n\nCurrent values through sources: " << endl;
-    for(double current : this->sourceCurrents) {
-        cout << setw(12) << current << endl;
-    }
-    cout << endl;
 
-    // print node voltages
-    cout << "Voltage values at nodes: " << endl;
-    for(double voltage : this->nodeVoltages) {
-        cout << setw(12) << voltage << endl;
-    }
-    cout << endl;
+    // printNodeVoltages();
+    // printSourceCurrents();
+    // printBatteries();
+
+    for(int i = 0; i < this->sourceCurrents.size(); i++)
+        currents.insert({"V" + to_string(i + 1), sourceCurrents[i]});
 
     vector<double> resistanceCurVec = getResistorCurrents();
+    for(int i = 0; i < resistanceCurVec.size(); i++) 
+        currents.insert({"R" + to_string(i + 1), resistanceCurVec[i]});
+
+        
 
     //Init node voltages and source currents
+}
+
+// utlitiy for print debugging
+void Circuit::printNodeVoltages()
+{
+    // print node voltages
+    cout << "Voltage values at nodes: " << endl;
+    for(int i = 0; i < this->nodeVoltages.size(); i++) {
+        cout << setw(12) << nodeVoltages[i] << endl;
+    }
+    cout << endl;
+}
+
+// utlitiy for print debugging
+void Circuit::printSourceCurrents()
+{
+    cout << "\n\nCurrent values through sources: " << endl;
+    for(int i = 0; i < this->sourceCurrents.size(); i++) {
+        cout << setw(12) << sourceCurrents[i] << endl;
+        currents.insert({"V" + i + 1, sourceCurrents[i]});
+    }
+    cout << endl;
 }
 
 // utlitiy for print debugging
@@ -208,10 +229,10 @@ void Circuit::makeGoodMatrices()
     V.insert(V.begin(), 0);
 
     // Print solution
-    for (double element : V)
-    {
-        cout << setw(12) << element;
-    }
+    // for (double element : V)
+    // {
+    //     cout << setw(12) << element;
+    // }
 
     // Add to node voltages all values - the number of voltage sources
     // this->nodeVoltages.resize(V.size()-batteries.size());
@@ -469,7 +490,7 @@ vector<double> Circuit::getResistorCurrents(){
         int dest_idx =(int)get<1>(tuple);
         int R = get<2>(tuple);
         resistorCurrentVec[i] = (this->nodeVoltages[source_idx] - this->nodeVoltages[dest_idx])/R;
-        cout << "Current through resistor " << i << ": " << resistorCurrentVec[i] << " A" << endl;
+        // cout << "Current through resistor " << i << ": " << resistorCurrentVec[i] << " A" << endl;
         i++;
     }
     

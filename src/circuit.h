@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include <map>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ struct Circuit
 
     // Source currents
     vector<double> sourceCurrents;
+    map<string, double> currents;
 
     vector<vector<double>> branchIncidenceMatrix;
 
@@ -28,6 +30,8 @@ struct Circuit
     // public methods
     void printBatteries();
     void printResistors();
+    void printNodeVoltages();
+    void printSourceCurrents();
     void printBranchIncidenceMatrix();
     vector<double> getCurrentVector();
     vector<vector<double>> getMatrixWithNewColumn(const vector<double>& newColumn) const;
