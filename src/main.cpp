@@ -10,7 +10,6 @@
 #include <string>
 #include <algorithm>
 
-
 #include "circuit.h"
 
 using namespace std;
@@ -246,6 +245,7 @@ void computeCurrent() {
         stringstream ss(input);
         string segment;
         char expectedChar;
+        cout << endl;
 
         while (getline(ss, segment, ']')) {
             if (segment.empty() || segment[0] != '[') {
@@ -299,8 +299,8 @@ void computeVoltage()
 
     cout << "A. Compute voltages of all nodes in circuit" << endl;
     cout << "B. Compute voltage at a single node" << endl;
-    cout <<"C. Compute voltage at each node in a list of nodes written like [2,3,5]"<< endl;
-    cout <<"D. Compute voltage drop between a pair of connected nodes written like [1,2]"<<endl;
+    cout << "C. Compute voltage at each node in a list of nodes written like [2,3,5]" << endl;
+    cout << "D. Compute voltage drop between a pair of connected nodes written like [1,2]" << endl << endl;
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     char option;
@@ -320,12 +320,16 @@ void computeVoltage()
         case 'B': 
         {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout<<"What node would you like the voltage for?"<<endl;
-            char node;
-            cin>>node;
-            auto it = currentCircuit.voltages.begin();
-            advance(it, node);
-            cout<<it->second<<endl;
+            cout << "What node would you like the voltage for? ";
+            int node;
+            cin >> node;
+            cout << endl;
+            if (node < 0 || node >= currentCircuit.nodeVoltages.size())
+            {
+                cout << "Error: Node does not exist in current netlist" << endl;
+                return;
+            }
+            cout << "V(" << node << "): " << currentCircuit.nodeVoltages[node] << endl;
             break;
         }
         case 'C':
@@ -334,6 +338,7 @@ void computeVoltage()
             cout << "Please enter a list of integers in the format [2,3,5]: ";
             string input;
             getline(std::cin, input);
+            cout << endl;
 
             // Remove '[' and ']' characters from the input
             input.erase(std::remove(input.begin(), input.end(), '['), input.end());
@@ -349,6 +354,15 @@ void computeVoltage()
                 istringstream(segment) >> number;
                 nodes.push_back(number);
             }
+            for (auto node : nodes)
+            {
+                if (node < 0 || node >= currentCircuit.nodeVoltages.size())
+                {
+                    cout << "Error: Node does not exist in current netlist" << endl;
+                    return;
+                }
+            }
+
             for (int node : nodes){
                 auto it = currentCircuit.voltages.begin();
                 advance(it, node);
@@ -372,7 +386,8 @@ void computeVoltage()
             int node1, node2;
             extractNumbers(input, node1, node2);
             if (node1 > currentCircuit.branchIncidenceMatrix.size() ||
-                node2 > currentCircuit.branchIncidenceMatrix.size())
+                node2 > currentCircuit.branchIncidenceMatrix.size() ||
+                node1 < 0 || node2 < 0)
             {
                 cout << "\nError: Nodes not in netlist" << endl;
                 return;
