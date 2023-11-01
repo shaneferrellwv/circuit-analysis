@@ -39,8 +39,35 @@ bool hasNan(const std::vector<double> &vec)
     return false;
 }
 
-bool checkNetlistValidity(const std::string &filename)
-{
+bool isInExpectedFormat(const std::string& str) {
+    char bracket1, bracket2, bracket3, bracket4, comma1, comma2, comma3;
+    int num1, num2, num3, num4;
+    
+    std::istringstream iss(str);
+    if (!(iss >> bracket1 >> num1 >> comma1 >> num2 >> bracket2 >> comma2 >> 
+              bracket3 >> num3 >> comma3 >> num4 >> bracket4)) {
+        return false;  // String doesn't match the format
+    }
+
+    return (bracket1 == '[' && bracket2 == ']' && bracket3 == '[' && bracket4 == ']' && 
+            comma1 == ',' && comma2 == ',' && comma3 == ',');
+}
+
+bool isInExpectedFormat(const std::string& str) {
+    char bracket1, bracket2, bracket3, bracket4, comma1, comma2, comma3;
+    int num1, num2, num3, num4;
+    
+    std::istringstream iss(str);
+    if (!(iss >> bracket1 >> num1 >> comma1 >> num2 >> bracket2 >> comma2 >> 
+              bracket3 >> num3 >> comma3 >> num4 >> bracket4)) {
+        return false;  // String doesn't match the format
+    }
+
+    return (bracket1 == '[' && bracket2 == ']' && bracket3 == '[' && bracket4 == ']' && 
+            comma1 == ',' && comma2 == ',' && comma3 == ',');
+}
+
+bool checkNetlistValidity(const std::string &filename){
     std::ifstream file(filename);
     if (!file.is_open())
     {
@@ -81,10 +108,11 @@ void readNewNetlist()
 
     char option;
     cin >> option;
-
+    
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "\nEnter netlist file path: ";
     string netlist;
-    cin >> netlist;
+    getline(cin, netlist);
 
     // check if netlist is valid
     if (!endsWithDotNet(netlist))
@@ -216,8 +244,27 @@ void computeVoltage()
 
     cout << "A. Compute voltages of all nodes in circuit" << endl;
     cout << "B. Compute voltage drops between all nodes in circuit" << endl;
-    cout << "C. Compute voltages and voltage drops from a list of nodes/pairs of nodes" << endl
-         << endl;
+    cout << "C. Compute voltages and voltage drops from a list of nodes/pairs of nodes" << endl << endl;
+
+    char option;
+    cin >> option;
+    cout << endl;
+
+    switch(option)
+    {
+        case 'A': 
+        {
+            for (auto it = currentCircuit.voltages.begin(); it != currentCircuit.voltages.end(); ++it)
+            {
+                cout << "V(" << it->first << "): " << it->second << endl;
+            }
+            break;
+        }
+        case 'B': 
+        {
+            
+        }
+    }
 }
 
 void displayMenu()
