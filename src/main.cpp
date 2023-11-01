@@ -4,6 +4,11 @@
 #include <filesystem>
 #include <vector>
 #include <cmath>
+#include <limits>
+#include <cctype>
+#include <sstream>
+#include <string>
+#include <algorithm>
 
 #include "circuit.h"
 
@@ -158,68 +163,78 @@ void readNewNetlist()
     currentNetlist = netlist;
 }
 
-void computeCurrent()
-{
+void computeCurrent() {
     vector<double> currents = currentCircuit.getCurrentVector();
 
-    cout << "\nSelect one of the following options:" << endl
-         << endl;
-
-    cout << "A. Compute currents across all branches in circuit" << endl;
-    cout << "B. Compute currents across a net list" << endl
-         << endl;
+    cout << "\nSelect one of the following options:\n\n";
+    cout << "A. Compute currents across all branches in circuit\n";
+    cout << "B. Compute currents across a net list\n\n";
 
     char option;
     cin >> option;
     cout << endl;
 
-    switch (option)
-    {
+    switch (option) {
     case 'A':
-    {
-        for (auto it = currentCircuit.currents.begin(); it != currentCircuit.currents.end(); ++it)
-        {
-            cout << "I(" << it->first << "): " << it->second << endl;
+        // Assuming currentCircuit.currents is a std::map or similar associative container
+        for (const auto& current : currentCircuit.currents) {
+            cout << "I(" << current.first << "): " << current.second << endl;
         }
         break;
-    }
     case 'B':
-    {
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Please enter net name or list of net names expected format [1,2] or [1,2],[2,0]: ";
 
-        std::string input;
+        string input;
         getline(cin, input);
 
-        std::vector<std::pair<int, int>> nodePairs;
+        vector<pair<int, int>> nodePairs;
+        stringstream ss(input);
+        string segment;
+        char expectedChar;
 
-        std::stringstream ss(input);
-        std::string segment;
-        while (getline(ss, segment, ']'))
-        {
-            std::string cleaned;
-            for (char c : segment) 
-            {
-                if (!isspace(c) && c != '[' && c != ']') 
-                {
-                    cleaned += c;
-                }
+        while (getline(ss, segment, ']')) {
+            if (segment.empty() || segment[0] != '[') {
+                cout << "Error: Each pair must be enclosed in brackets.\n";
+                return;
             }
-            segment = cleaned;
+            segment.erase(remove_if(segment.begin(), segment.end(), ::isspace), segment.end());
+            segment.erase(remove(segment.begin(), segment.end(), '['), segment.end());
 
-            int firstNode = stoi(segment.substr(0, segment.find(',')));
-            int secondNode = stoi(segment.substr(segment.find(',') + 1));
-            nodePairs.push_back({firstNode, secondNode});
-            
+            if (count(segment.begin(), segment.end(), ',') != 1) {
+                cout << "Error: Invalid format, exactly one comma expected in each pair.\n";
+                return;
+            }
+
+            size_t commaPos = segment.find(',');
+            string firstNodeStr = segment.substr(0, commaPos);
+            string secondNodeStr = segment.substr(commaPos + 1);
+
+            if (!all_of(firstNodeStr.begin(), firstNodeStr.end(), ::isdigit) ||
+                !all_of(secondNodeStr.begin(), secondNodeStr.end(), ::isdigit)) {
+                cout << "Error: Non-integer value found.\n";
+                return;
+            }
+
+            try {
+                int firstNode = stoi(firstNodeStr);
+                int secondNode = stoi(secondNodeStr);
+                nodePairs.push_back({firstNode, secondNode});
+            } catch (const exception& e) {
+                cout << "Error: Invalid number format.\n";
+                return;
+            }
+
+            if (ss >> expectedChar && expectedChar != ',') {
+                cout << "Error: Expected comma between pairs.\n";
+                return;
+            }
             ss.ignore(1, ',');
-
         }
 
         double totalCurrent = currentCircuit.getCurrentFromPoints(nodePairs);
-
         cout << "Total current: " << totalCurrent << endl;
         break;
-    }
     }
 }
 

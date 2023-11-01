@@ -1,4 +1,4 @@
-3. print specific current
+
 4. check validity of user-enetered pairs of nodes (existence of nodes and connection between nodes)
 5. print all voltages and voltage potentials
 6. print specific voltage/voltage potential
