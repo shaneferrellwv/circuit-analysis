@@ -24,7 +24,7 @@ Circuit::Circuit(string netList)
     }
     constructBranchIncidenceMatrix();
     makeGoodMatrices();
-    cout << "Current values through sources: " << endl;
+    cout << "\n\nCurrent values through sources: " << endl;
     for(double current : this->sourceCurrents) {
         cout << setw(12) << current << endl;
     }
@@ -42,6 +42,7 @@ Circuit::Circuit(string netList)
     //Init node voltages and source currents
 }
 
+// utlitiy for print debugging
 void Circuit::printBatteries()
 {
     cout << "Voltage Sources (source | destination | voltage):" << endl;
@@ -56,6 +57,7 @@ void Circuit::printBatteries()
     cout << endl;
 }
 
+// utlitiy for print debugging
 void Circuit::printResistors()
 {
     cout << "Resistors (source | destination | resistance):" << endl;
@@ -70,6 +72,7 @@ void Circuit::printResistors()
     cout << endl;
 }
 
+// utlitiy for print debugging
 void Circuit::printBranchIncidenceMatrix()
 {
     cout << "Branch Incidence Matrix:" << endl;
@@ -351,27 +354,27 @@ vector<double> Circuit::solveMatrix(vector<vector<double>> *matrix_ptr, int dept
 
 void Circuit::addBattery(istringstream &in)
 {
-    int source, destination, voltage;
-    string name;
-    in >> name;
-    in >> source;
-    in >> destination;
-    in >> voltage;
+    string name, source, destination, voltage;
 
-    tuple<int, int, double> battery = make_tuple(source, destination, voltage);
+    getline(in, name, ' ');
+    getline(in, source, ' ');
+    getline(in, destination, ' ');
+    getline(in, voltage, ' ');
+
+    tuple<int, int, double> battery = make_tuple(stoi(source), stoi(destination), stod(voltage));
     this->batteries.push_back(battery);
 }
 
 void Circuit::addResistor(istringstream &in)
 {
-    string name;
-    int source, destination, resistance;
-    in >> name;
-    in >> source;
-    in >> destination;
-    in >> resistance;
+    string name, source, destination, resistance;
 
-    tuple<int,int,int> resistor = make_tuple(source, destination, resistance);
+    getline(in, name, ' ');
+    getline(in, source, ' ');
+    getline(in, destination, ' ');
+    getline(in, resistance, ' ');
+
+    tuple<int, int, double> resistor = make_tuple(stoi(source), stoi(destination), stod(resistance));
     this->resistors.push_back(resistor);
 }
 
@@ -465,8 +468,8 @@ vector<double> Circuit::getResistorCurrents(){
         int source_idx =(int)get<0>(tuple);
         int dest_idx =(int)get<1>(tuple);
         int R = get<2>(tuple);
-        resistorCurrentVec[i] = (this->nodeVoltages[source_idx]-this->nodeVoltages[dest_idx])/R;
-        cout<<"Current through resistor "<<i<<": "<<resistorCurrentVec[i]<<"A"<<endl;
+        resistorCurrentVec[i] = (this->nodeVoltages[source_idx] - this->nodeVoltages[dest_idx])/R;
+        cout << "Current through resistor " << i << ": " << resistorCurrentVec[i] << " A" << endl;
         i++;
     }
     
