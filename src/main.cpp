@@ -231,7 +231,7 @@ void computeCurrent() {
                 cout << "Error: Expected comma between pairs.\n";
                 return;
             }
-            ss.ignore(1, ',');
+            // ss.ignore(1, ',');
         }
 
         double totalCurrent = currentCircuit.getCurrentFromPoints(nodePairs);
