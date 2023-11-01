@@ -44,6 +44,7 @@ struct Circuit
     vector<double> getResistorCurrents();
     double getCurrentFromPoints(const std::vector<std::pair<int, int>>& nodePairs);
     bool checkNodeListValidity(vector<pair<int, int>> nodePairs);
+    double getVoltageFromPoints(int node1, int node2);
 
     // private methods
 private:

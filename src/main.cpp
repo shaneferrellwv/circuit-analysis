@@ -90,6 +90,53 @@ bool checkNetlistValidity(const std::string &filename){
     return true; // All lines match criteria
 }
 
+bool isInteger(const std::string &s) {
+    for (char c : s) {
+        if (!std::isdigit(c)) return false;
+    }
+    return true;
+}
+
+bool isValidFormat(const std::string &s) {
+    if (s.front() != '[' || s.back() != ']') return false;
+
+    size_t commaPos = s.find(',');
+    if (commaPos == std::string::npos) return false;
+
+    std::string firstNum = s.substr(1, commaPos - 1);
+    std::string secondNum = s.substr(commaPos + 1, s.length() - commaPos - 2);
+
+    // Trim spaces
+    firstNum.erase(0, firstNum.find_first_not_of(' '));
+    firstNum.erase(firstNum.find_last_not_of(' ') + 1);
+    secondNum.erase(0, secondNum.find_first_not_of(' '));
+    secondNum.erase(secondNum.find_last_not_of(' ') + 1);
+
+    return isInteger(firstNum) && isInteger(secondNum);
+}
+
+bool extractNumbers(const std::string &s, int &firstNum, int &secondNum) {
+    if (s.front() != '[' || s.back() != ']') return false;
+
+    size_t commaPos = s.find(',');
+    if (commaPos == std::string::npos) return false;
+
+    std::string firstStr = s.substr(1, commaPos - 1);
+    std::string secondStr = s.substr(commaPos + 1, s.length() - commaPos - 2);
+
+    // Trim spaces
+    firstStr.erase(0, firstStr.find_first_not_of(' '));
+    firstStr.erase(firstStr.find_last_not_of(' ') + 1);
+    secondStr.erase(0, secondStr.find_first_not_of(' '));
+    secondStr.erase(secondStr.find_last_not_of(' ') + 1);
+
+    // Convert to integers
+    firstNum = std::stoi(firstStr);
+    secondNum = std::stoi(secondStr);
+
+    return true;
+}
+
 
 
 
@@ -175,6 +222,8 @@ void computeCurrent() {
     cout << "A. Compute currents across all branches in circuit\n";
     cout << "B. Compute currents across a net list\n\n";
 
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     char option;
     cin >> option;
     cout << endl;
@@ -253,6 +302,7 @@ void computeVoltage()
     cout <<"C. Compute voltage at each node in a list of nodes written like [2,3,5]"<< endl;
     cout <<"D. Compute voltage drop between a pair of connected nodes written like [1,2]"<<endl;
 
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     char option;
     cin >> option;
     cout << endl;
@@ -261,14 +311,15 @@ void computeVoltage()
     {
         case 'A': 
         {
-            for (auto it = currentCircuit.voltages.begin(); it != currentCircuit.voltages.end(); ++it)
+            for (int i = 0; i < currentCircuit.nodeVoltages.size(); i++)
             {
-                cout << "V(" << it->first << "): " << it->second << endl;
+                cout << "V(" << i << "): " << currentCircuit.nodeVoltages[i] << endl;
             }
             break;
         }
         case 'B': 
         {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout<<"What node would you like the voltage for?"<<endl;
             char node;
             cin>>node;
@@ -279,6 +330,7 @@ void computeVoltage()
         }
         case 'C':
         {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Please enter a list of integers in the format [2,3,5]: ";
             string input;
             getline(std::cin, input);
@@ -304,6 +356,31 @@ void computeVoltage()
             }
             break;
         }
+        case 'D':
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Please enter net names in expected format [1,2]: ";
+
+            string input;
+            getline(cin, input);
+
+            if (!isValidFormat(input))
+            {
+                cout << "\nError: Invalid net name format" << endl;
+                return;
+            }
+            int node1, node2;
+            extractNumbers(input, node1, node2);
+            if (node1 > currentCircuit.branchIncidenceMatrix.size() ||
+                node2 > currentCircuit.branchIncidenceMatrix.size())
+            {
+                cout << "\nError: Nodes not in netlist" << endl;
+                return;
+            }
+            cout << "\nVoltage drop from nodes " << node1 << " and " << node2 << ": " 
+                 << currentCircuit.getVoltageFromPoints(node1, node2) << endl;
+
+        }
     }
 }
 
@@ -320,11 +397,10 @@ void displayMenu()
     cout << "A. Read a new netlist" << endl;
     cout << "B. Compute current values for the current netlist" << endl;
     cout << "C. Compute voltage values for the current netlist" << endl;
-    cout << "D. Exit" << endl
-         << endl;
+    cout << "D. Exit" << endl << endl;
     // currentCircuit.printBatteries();
     // currentCircuit.printResistors();
-    currentCircuit.printBranchIncidenceMatrix();
+    // currentCircuit.printBranchIncidenceMatrix();
     
 }
 

@@ -30,13 +30,13 @@ Circuit::Circuit(string netList)
     // printSourceCurrents();
     // printBatteries();
 
-    for(int i = 0; i < this->sourceCurrents.size(); i++)
+    for(unsigned int i = 0; i < this->sourceCurrents.size(); i++)
         currents.insert({"V" + to_string(i + 1), sourceCurrents[i]});
 
-    for(int i = 0; i < resistorCurrents.size(); i++) 
+    for(unsigned int i = 0; i < resistorCurrents.size(); i++) 
         currents.insert({"R" + to_string(i + 1), resistorCurrents[i]});
 
-    for(int i = 0; i < this->nodeVoltages.size(); i++)
+    for(unsigned int i = 0; i < this->nodeVoltages.size(); i++)
         voltages.insert({"V" + to_string(i), nodeVoltages[i]});
 }
 
@@ -45,7 +45,7 @@ void Circuit::printNodeVoltages()
 {
     // print node voltages
     cout << "Voltage values at nodes: " << endl;
-    for(int i = 0; i < this->nodeVoltages.size(); i++) {
+    for(unsigned int i = 0; i < this->nodeVoltages.size(); i++) {
         cout << setw(12) << nodeVoltages[i] << endl;
     }
     cout << endl;
@@ -55,7 +55,7 @@ void Circuit::printNodeVoltages()
 void Circuit::printSourceCurrents()
 {
     cout << "\n\nCurrent values through sources: " << endl;
-    for(int i = 0; i < this->sourceCurrents.size(); i++) {
+    for(unsigned int i = 0; i < this->sourceCurrents.size(); i++) {
         cout << setw(12) << sourceCurrents[i] << endl;
     }
     cout << endl;
@@ -566,3 +566,10 @@ double Circuit::getCurrentFromPoints(const std::vector<std::pair<int, int>>& nod
     return totalVoltage/totalResistance;
 }
 
+
+double Circuit::getVoltageFromPoints(int node1, int node2)
+{
+    double v1 = nodeVoltages[node1];
+    double v2 = nodeVoltages[node2];
+    return v1 - v2;
+}
