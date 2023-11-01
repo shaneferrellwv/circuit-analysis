@@ -36,7 +36,8 @@ Circuit::Circuit(string netList)
     for(int i = 0; i < resistorCurrents.size(); i++) 
         currents.insert({"R" + to_string(i + 1), resistorCurrents[i]});
 
-    
+    for(int i = 0; i < this->nodeVoltages.size(); i++)
+        voltages.insert({"V" + to_string(i), nodeVoltages[i]});
 }
 
 // utlitiy for print debugging

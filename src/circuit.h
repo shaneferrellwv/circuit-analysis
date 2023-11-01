@@ -21,6 +21,7 @@ struct Circuit
     vector<double> sourceCurrents;
     vector<double> resistorCurrents;
     map<string, double> currents;
+    map<string, double> voltages;
 
     vector<vector<double>> branchIncidenceMatrix;
 

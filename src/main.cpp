@@ -34,6 +34,20 @@ bool hasNan(const std::vector<double>& vec) {
     return false;
 }
 
+bool isInExpectedFormat(const std::string& str) {
+    char bracket1, bracket2, bracket3, bracket4, comma1, comma2, comma3;
+    double num1, num2, num3, num4;
+    
+    std::istringstream iss(str);
+    if (!(iss >> bracket1 >> num1 >> comma1 >> num2 >> bracket2 >> comma2 >> 
+              bracket3 >> num3 >> comma3 >> num4 >> bracket4)) {
+        return false;  // String doesn't match the format
+    }
+
+    return (bracket1 == '[' && bracket2 == ']' && bracket3 == '[' && bracket4 == ']' && 
+            comma1 == ',' && comma2 == ',' && comma3 == ',');
+}
+
 bool checkNetlistValidity(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -130,8 +144,6 @@ void readNewNetlist()
     currentNetlist = netlist;
 }
 
-
-
 void computeCurrent()
 {
     vector<double> currents = currentCircuit.getCurrentVector();
@@ -160,11 +172,20 @@ void computeCurrent()
         case 'B': 
         {
             cout << "Please enter two pairs of nodes: ";
+
             // expected format [node1, node2], [node2, node3]
             // this is the dumbest format ever
-            
+            string nodesList;
+            cin >> nodesList;
+            if (!isInExpectedFormat(nodesList))
+            {
+                cout << "Error: List not in expected format [node1, node2], [node2, node3]" << endl;
+                return;
+            }
+            else
+            {
 
-
+            }
             break;
         }
     }
@@ -177,6 +198,26 @@ void computeVoltage()
     cout << "A. Compute voltages of all nodes in circuit" << endl;
     cout << "B. Compute voltage drops between all nodes in circuit" << endl;
     cout << "C. Compute voltages and voltage drops from a list of nodes/pairs of nodes" << endl << endl;
+
+    char option;
+    cin >> option;
+    cout << endl;
+
+    switch(option)
+    {
+        case 'A': 
+        {
+            for (auto it = currentCircuit.voltages.begin(); it != currentCircuit.voltages.end(); ++it)
+            {
+                cout << "V(" << it->first << "): " << it->second << endl;
+            }
+            break;
+        }
+        case 'B': 
+        {
+            
+        }
+    }
 }
 
 void displayMenu()
