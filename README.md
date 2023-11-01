@@ -8,7 +8,7 @@ Below are the steps to run the ``circuit-analysis`` tool:
 
 1. Clone this repository to your computer.
 2. In a terminal, navigate to the ``src/`` directory.
-3. Run the command ``mingw32-make`` to compile the code into an executable called ``circuit-analysis.exe``.
+3. Run the command ``g++ -Wall main.cpp circuit.cpp -o circuit-analysis -std=c++11`` to compile the code into an executable called ``circuit-analysis.exe``.
 4. Run the executable with the command ``./circuit-analysis``.
 
 # Important Usage Notes
