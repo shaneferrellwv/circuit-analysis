@@ -90,6 +90,9 @@ bool checkNetlistValidity(const std::string &filename){
     return true; // All lines match criteria
 }
 
+
+
+
 void readNewNetlist()
 {
     cout << "\nSelect one of the following options:" << endl
@@ -246,8 +249,9 @@ void computeVoltage()
          << endl;
 
     cout << "A. Compute voltages of all nodes in circuit" << endl;
-    cout << "B. Compute voltage drops between all nodes in circuit" << endl;
-    cout << "C. Compute voltages and voltage drops from a list of nodes/pairs of nodes" << endl << endl;
+    cout << "B. Compute voltage at a single node" << endl;
+    cout <<"C. Compute voltage at each node in a list of nodes written like [2,3,5]"<< endl;
+    cout <<"D. Compute voltage drop between a pair of connected nodes written like [1,2]"<<endl;
 
     char option;
     cin >> option;
@@ -265,7 +269,40 @@ void computeVoltage()
         }
         case 'B': 
         {
-            
+            cout<<"What node would you like the voltage for?"<<endl;
+            char node;
+            cin>>node;
+            auto it = currentCircuit.voltages.begin();
+            advance(it, node);
+            cout<<it->second<<endl;
+            break;
+        }
+        case 'C':
+        {
+            cout << "Please enter a list of integers in the format [2,3,5]: ";
+            string input;
+            getline(std::cin, input);
+
+            // Remove '[' and ']' characters from the input
+            input.erase(std::remove(input.begin(), input.end(), '['), input.end());
+            input.erase(std::remove(input.begin(), input.end(), ']'), input.end());
+
+            vector<int> nodes;
+            stringstream ss(input);
+            string segment;
+
+            // Tokenize the input using ',' as delimiter and store integers in the vector
+            while (getline(ss, segment, ',')) {
+                int number;
+                istringstream(segment) >> number;
+                nodes.push_back(number);
+            }
+            for (int node : nodes){
+                auto it = currentCircuit.voltages.begin();
+                advance(it, node);
+                cout<<"V("<<node<<"): "<<it->second<<endl;
+            }
+            break;
         }
     }
 }
@@ -287,7 +324,8 @@ void displayMenu()
          << endl;
     // currentCircuit.printBatteries();
     // currentCircuit.printResistors();
-    // currentCircuit.printBranchIncidenceMatrix();
+    currentCircuit.printBranchIncidenceMatrix();
+    
 }
 
 int main()

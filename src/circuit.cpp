@@ -91,6 +91,24 @@ void Circuit::printResistors()
     cout << endl;
 }
 
+// check if two nodes are connected
+bool Circuit::checkNodeListValidity(vector<pair<int, int>> nodePairs){
+    if (nodePairs.empty()) {
+        return false;
+    }
+
+    int node1 = nodePairs.front().first;
+    int node2 = nodePairs.back().second;
+
+    for (const auto& pair : nodePairs) {
+        if ((pair.first == node1 && pair.second == node2) ||
+            (pair.first == node2 && pair.second == node1)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // utlitiy for print debugging
 void Circuit::printBranchIncidenceMatrix()
 {
@@ -100,6 +118,7 @@ void Circuit::printBranchIncidenceMatrix()
         for (int element : row)
         {
             cout << setw(3) << element;
+            
         }
         cout << endl;
     }

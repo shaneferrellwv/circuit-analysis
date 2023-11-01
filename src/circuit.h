@@ -43,6 +43,7 @@ struct Circuit
     vector<double> getVotlageNodes();
     vector<double> getResistorCurrents();
     double getCurrentFromPoints(const std::vector<std::pair<int, int>>& nodePairs);
+    bool checkNodeListValidity(vector<pair<int, int>> nodePairs);
 
     // private methods
 private:
